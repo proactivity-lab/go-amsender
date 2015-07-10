@@ -15,7 +15,7 @@ import "github.com/proactivity-lab/go-sfconnection"
 
 const ApplicationVersionMajor = 0
 const ApplicationVersionMinor = 1
-const ApplicationVersionPatch = 0
+const ApplicationVersionPatch = 1
 
 var ApplicationBuildDate string
 var ApplicationBuildDistro string
@@ -74,7 +74,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	dsp := sfconnection.NewMessageDispatcher(new(sfconnection.Message))
+	dsp := sfconnection.NewMessageDispatcher(sfconnection.NewMessage(opts.Group, opts.Source))
 	sfc := sfconnection.NewSfConnection()
 	sfc.AddDispatcher(dsp)
 
@@ -103,11 +103,9 @@ func main() {
 	logger.Printf("connected to %s:%d\n", host, port)
 
 	// Create the message
-	msg := dsp.NewPacket().(*sfconnection.Message)
+	msg := dsp.NewMessage()
 	msg.SetDestination(opts.Destination)
-	msg.SetSource(opts.Source)
 	msg.SetType(opts.AmId)
-	msg.SetGroup(opts.Group)
 	msg.Payload = []byte(opts.Payload)
 
 	// Send the message
